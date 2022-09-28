@@ -20,7 +20,7 @@ public final class Algoritmo {
                     {1, -1}, {1, 0}, {1, 1}};
     public static final double TEMPERATURA_MAXIMA = 10000.0;
     public static final double TEMPERATURA_MINIMA = 0.0001;
-    public static final double REDUCAO_TEMPERATURA_POR_ITERACAO = 0.9999;
+    public static final double REDUCAO_TEMPERATURA_POR_ITERACAO = 0.1999;
     private final int tamanho; // Labirinto quadrado, logo, o tamanho é o número de linhas e colunas.
     private final int comidaTotal; // Metade do tamanho do labirinto
     private final char[][] labirinto; // 'E'=Início, '0'=Caminho, '1'=Parede, 'C'=Comida
@@ -60,7 +60,7 @@ public final class Algoritmo {
             // System.out.println("Temperatura: " + temperatura + "ºC");
 
             var direcoes = sucessor();
-            var direcao = direcoes.get(random.nextInt(direcoes.size())); // Usar heuristica para escolher a direção
+            var direcao = escolheCaminho(direcoes);
 
             atual.andar(direcao);
 
@@ -80,6 +80,35 @@ public final class Algoritmo {
         }
         imprimirSolucao(atual.direcoes, "Solução vizinha");
         imprimirCaminho(atual.direcoes, labirinto, "Caminho da solução vizinha");
+    }
+
+    private int[] escolheCaminho(List<int[]> direcoes) {
+        var linha = atual.linha +  direcoes.get(0)[0];
+        var coluna = atual.coluna +  direcoes.get(0)[1];
+
+        var melhor = 0;
+        var melhorValor = avaliaDirecao(linha, coluna);
+        for (int i = 0; i < direcoes.size(); i++) {
+            linha = atual.linha +  direcoes.get(i)[0];
+            coluna = atual.coluna +  direcoes.get(i)[1];
+            if (avaliaDirecao(linha, coluna) >= melhorValor) {
+                melhor = i;
+                melhorValor = avaliaDirecao(linha, coluna);
+            }
+        }
+
+        return direcoes.get(melhor);
+    }
+
+    private int avaliaDirecao(int linha, int coluna) {
+        var pontos = 0;
+        if (atual.jaVisitou(linha, coluna)) {
+            pontos -= 10;
+        } else if (isComida(linha, coluna)) {
+            pontos += 100;
+        }
+
+        return pontos;
     }
 
     private void atual() {

@@ -15,6 +15,9 @@ public class Solucao {
 
     Map<String, Boolean> comidas = new HashMap<>();
 
+    Map<String, Boolean> visitados = new HashMap<>();
+
+
     int linha;
     int coluna;
 
@@ -42,5 +45,10 @@ public class Solucao {
         direcoes.add(direcao);
         linha += direcao[0];
         coluna += direcao[1];
+        visitados.put(linha + "," + coluna, true);
+    }
+
+    public boolean jaVisitou(int linha, int coluna) {
+        return visitados.get(linha + "," + coluna) != null && visitados.get(linha + "," + coluna);
     }
 }
